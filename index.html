@@ -11,162 +11,57 @@
     <link rel="stylesheet" href="styles.css" />
 
     <style>
-      /* ====== AJUSTES PARA CELULAR ====== */
-
       html,
       body {
+        margin: 0;
+        padding: 0;
         width: 100%;
-        max-width: 100%;
-        overflow-x: hidden;
+        height: 100%;
+        overflow: hidden;
       }
 
       .app-shell {
-        width: 100%;
-        max-width: 100%;
-        padding: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
       }
 
       .topbar {
-        padding: 14px;
-        gap: 10px;
-        flex-wrap: wrap;
-      }
-
-      .topbar h1 {
-        font-size: 1.5rem;
+        flex-shrink: 0;
       }
 
       .search-panel {
-        padding: 12px;
-      }
-
-      .search-box input {
-        font-size: 16px;
-      }
-
-      .filters {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-
-      .filter-chip {
-        font-size: 0.85rem;
-        padding: 8px 10px;
+        flex-shrink: 0;
       }
 
       .map-area {
-        height: 42vh;
-        min-height: 320px;
+        flex: 1;
+        min-height: 0;
+        position: relative;
       }
 
-      .map,
-      #map {
+      #map,
+      .map {
         width: 100%;
         height: 100%;
       }
 
       .places-panel {
-        padding: 12px;
-        border-radius: 20px 20px 0 0;
-      }
-
-      .places-list {
-        gap: 12px;
-      }
-
-      .place-card,
-      .place-item,
-      .place {
-        width: 100%;
-        max-width: 100%;
-      }
-
-      .auth-card {
-        width: calc(100% - 24px);
-        max-width: 420px;
-        padding: 20px;
-      }
-
-      .auth-form input,
-      .auth-form textarea,
-      .sacho-input input,
-      select,
-      textarea {
-        font-size: 16px;
-      }
-
-      .primary-button,
-      .secondary-button,
-      .text-button {
-        min-height: 48px;
-      }
-
-      .sacho-panel {
-        width: calc(100% - 20px);
-        right: 10px;
-        left: 10px;
-        bottom: 10px;
-        max-height: 75vh;
-      }
-
-      .sacho-thread {
-        max-height: 40vh;
+        max-height: 34vh;
         overflow-y: auto;
+        flex-shrink: 0;
       }
 
-      .place-dialog,
-      .wide-dialog {
-        width: calc(100% - 20px);
-        max-width: 100%;
-        border-radius: 18px;
-        padding: 18px;
-      }
-
-      .settings-panel,
-      .suggest-form {
-        width: 100%;
-      }
-
-      .choice-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .photo-box video,
-      .photo-box img {
-        width: 100%;
-        height: auto;
-        border-radius: 14px;
-      }
-
-      @media (max-width: 480px) {
-        .topbar-actions {
-          gap: 8px;
-        }
-
-        .icon-button {
-          width: 42px;
-          height: 42px;
-        }
-
-        .panel-title-row {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 10px;
-        }
-
-        .quick-prompts {
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        }
-
-        .quick-prompts button {
-          width: 100%;
-        }
+      .sacho-launcher {
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
+        z-index: 9999;
       }
     </style>
   </head>
+
   <body>
     <section class="auth-screen" id="authScreen" aria-label="Acceso a IncluMapa">
       <div class="auth-card">
@@ -184,10 +79,12 @@
             Email
             <input id="loginEmail" type="email" autocomplete="email" placeholder="tu@email.com" />
           </label>
+
           <label>
             Contraseña
             <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Tu contraseña" />
           </label>
+
           <button class="primary-button" type="submit">Iniciar sesión</button>
         </form>
 
@@ -196,26 +93,35 @@
             Nombre
             <input id="registerName" type="text" autocomplete="name" placeholder="Tu nombre" />
           </label>
+
           <label>
             Email
             <input id="registerEmail" type="email" autocomplete="email" placeholder="tu@email.com" />
           </label>
+
           <label>
             Contraseña
             <input id="registerPassword" type="password" autocomplete="new-password" placeholder="Mínimo 4 caracteres" />
           </label>
+
           <div class="verification-box" id="verificationBox" hidden>
             <p>Te pediremos un código de 6 dígitos para validar tu Gmail.</p>
+
             <label>
               Código recibido
               <input id="registerCode" type="text" inputmode="numeric" maxlength="6" placeholder="123456" />
             </label>
+
             <p class="code-preview" id="codePreview"></p>
           </div>
+
           <button class="primary-button" id="registerSubmitButton" type="submit">Enviar código</button>
         </form>
 
-        <button class="secondary-button guest-button" id="guestButton" type="button">Entrar como visitante</button>
+        <button class="secondary-button guest-button" id="guestButton" type="button">
+          Entrar como visitante
+        </button>
+
         <p class="auth-message" id="authMessage" aria-live="polite"></p>
       </div>
     </section>
@@ -227,13 +133,16 @@
           <h1>IncluMapa</h1>
           <p class="session-label" id="sessionLabel">Sin sesión</p>
         </div>
+
         <div class="topbar-actions">
           <button class="icon-button" id="logoutButton" type="button" aria-label="Cerrar sesion" title="Cerrar sesion">
             <span aria-hidden="true">↩️</span>
           </button>
+
           <button class="icon-button" id="settingsButton" type="button" aria-label="Abrir configuracion de accesibilidad" title="Configuracion">
             <span aria-hidden="true">⚙️</span>
           </button>
+
           <button class="icon-button" id="locateButton" type="button" aria-label="Centrar en mi ubicacion" title="Centrar en mi ubicacion">
             <span aria-hidden="true">⌖</span>
           </button>
@@ -243,7 +152,13 @@
       <section class="search-panel" aria-label="Buscar lugares accesibles">
         <label class="search-box" for="searchInput">
           <span aria-hidden="true">⌕</span>
-          <input id="searchInput" type="search" placeholder="Buscar restaurante, bar, teatro..." autocomplete="off" />
+
+          <input
+            id="searchInput"
+            type="search"
+            placeholder="Buscar restaurante, bar, teatro..."
+            autocomplete="off"
+          />
         </label>
 
         <div class="filters" role="group" aria-label="Filtros de accesibilidad">
@@ -257,17 +172,33 @@
 
       <section class="map-area" aria-label="Mapa de lugares">
         <div id="map" class="map"></div>
+
         <div id="demoMap" class="demo-map" aria-hidden="true">
           <div class="street street-a"></div>
           <div class="street street-b"></div>
           <div class="street street-c"></div>
+
           <div class="park"></div>
-          <button class="pin pin-1" data-place-id="colon" type="button" aria-label="Abrir Teatro Colón"><span>1</span></button>
-          <button class="pin pin-2" data-place-id="malba" type="button" aria-label="Abrir MALBA"><span>2</span></button>
-          <button class="pin pin-3" data-place-id="moderno" type="button" aria-label="Abrir Museo Moderno"><span>3</span></button>
-          <button class="pin pin-4" data-place-id="planetario" type="button" aria-label="Abrir Planetario"><span>4</span></button>
+
+          <button class="pin pin-1" data-place-id="colon" type="button" aria-label="Abrir Teatro Colón">
+            <span>1</span>
+          </button>
+
+          <button class="pin pin-2" data-place-id="malba" type="button" aria-label="Abrir MALBA">
+            <span>2</span>
+          </button>
+
+          <button class="pin pin-3" data-place-id="moderno" type="button" aria-label="Abrir Museo Moderno">
+            <span>3</span>
+          </button>
+
+          <button class="pin pin-4" data-place-id="planetario" type="button" aria-label="Abrir Planetario">
+            <span>4</span>
+          </button>
+
           <span class="demo-note">Demo sin conexión</span>
         </div>
+
         <div class="map-status" id="mapStatus">
           Cargando OpenStreetMap...
         </div>
@@ -275,17 +206,28 @@
 
       <section class="places-panel" aria-label="Lugares encontrados">
         <div class="panel-handle" aria-hidden="true"></div>
+
         <div class="panel-title-row">
           <div>
             <h2>Lugares cercanos</h2>
             <p id="resultCount">4 opciones inclusivas</p>
           </div>
-          <button class="text-button" id="addPlaceButton" type="button" data-auth-required="true">Añadir lugar</button>
+
+          <button class="text-button" id="addPlaceButton" type="button" data-auth-required="true">
+            Añadir lugar
+          </button>
         </div>
+
         <div id="placesList" class="places-list"></div>
       </section>
 
-      <button class="sacho-launcher" id="sachoButton" type="button" aria-label="Preguntarle a Sacho Panza" data-auth-required="true">
+      <button
+        class="sacho-launcher"
+        id="sachoButton"
+        type="button"
+        aria-label="Preguntarle a Sacho Panza"
+        data-auth-required="true"
+      >
         <span aria-hidden="true">SP</span>
       </button>
 
@@ -295,46 +237,84 @@
             <p class="eyebrow">IA integrada</p>
             <h2>Sacho Panza</h2>
           </div>
-          <button class="close-inline" id="closeSachoButton" type="button" aria-label="Cerrar Sacho Panza">×</button>
+
+          <button class="close-inline" id="closeSachoButton" type="button" aria-label="Cerrar Sacho Panza">
+            ×
+          </button>
         </div>
+
         <div class="sacho-thread" id="sachoThread" aria-live="polite">
-          <p><strong>Sacho Panza:</strong> Decime qué necesitás y te recomiendo lugares según tu perfil.</p>
+          <p>
+            <strong>Sacho Panza:</strong>
+            Decime qué necesitás y te recomiendo lugares según tu perfil.
+          </p>
         </div>
+
         <div class="quick-prompts" aria-label="Preguntas rapidas para Sacho Panza">
-          <button type="button" data-question="Soy usuario de silla de ruedas y quiero cenar cerca">Silla de ruedas</button>
-          <button type="button" data-question="Soy ciego y quiero un bar con carta accesible">Persona ciega</button>
-          <button type="button" data-question="Necesito un lugar con lengua de señas">Lengua de señas</button>
+          <button type="button" data-question="Soy usuario de silla de ruedas y quiero cenar cerca">
+            Silla de ruedas
+          </button>
+
+          <button type="button" data-question="Soy ciego y quiero un bar con carta accesible">
+            Persona ciega
+          </button>
+
+          <button type="button" data-question="Necesito un lugar con lengua de señas">
+            Lengua de señas
+          </button>
         </div>
+
         <label class="sacho-input" for="sachoInput">
-          <input id="sachoInput" type="text" placeholder="Ej. quiero merendar con baño accesible" />
+          <input
+            id="sachoInput"
+            type="text"
+            placeholder="Ej. quiero merendar con baño accesible"
+          />
+
           <button id="askSachoButton" type="button">Enviar</button>
         </label>
       </aside>
     </main>
 
     <dialog id="placeDialog" class="place-dialog">
-      <button class="close-button" id="closeDialogButton" type="button" aria-label="Cerrar">×</button>
+      <button class="close-button" id="closeDialogButton" type="button" aria-label="Cerrar">
+        ×
+      </button>
+
       <div id="dialogContent"></div>
     </dialog>
 
     <dialog id="suggestDialog" class="place-dialog wide-dialog">
-      <button class="close-button" id="closeSuggestButton" type="button" aria-label="Cerrar">×</button>
+      <button class="close-button" id="closeSuggestButton" type="button" aria-label="Cerrar">
+        ×
+      </button>
+
       <form class="suggest-form" id="suggestForm" method="dialog">
         <h2>Añadir lugar inclusivo</h2>
-        <p class="form-note">La ubicacion se toma desde tu telefono para validar que estas cerca del lugar cuando sacas la foto.</p>
+
+        <p class="form-note">
+          La ubicacion se toma desde tu telefono para validar que estas cerca del lugar cuando sacas la foto.
+        </p>
+
         <label>
           Nombre
           <input id="suggestName" type="text" placeholder="Ej. Restaurante Amable" />
         </label>
+
         <div class="location-card">
           <div>
             <strong>Ubicacion verificada</strong>
             <p id="locationStatus">Todavia no se pidio permiso.</p>
           </div>
-          <button class="secondary-button" id="captureLocationButton" type="button">Usar mi ubicacion</button>
+
+          <button class="secondary-button" id="captureLocationButton" type="button">
+            Usar mi ubicacion
+          </button>
         </div>
+
         <fieldset>
           <legend>Que inclusion tiene</legend>
+
           <div class="choice-grid">
             <label><input type="checkbox" value="rampa" /> Rampa</label>
             <label><input type="checkbox" value="braille" /> Carta en braille</label>
@@ -342,32 +322,59 @@
             <label><input type="checkbox" value="senas" /> Lengua de señas</label>
           </div>
         </fieldset>
+
         <div class="photo-box" aria-label="Camara para evidencia">
           <strong>Foto de evidencia</strong>
+
           <video id="cameraPreview" autoplay playsinline muted hidden></video>
+
           <img id="photoPreview" alt="Vista previa de la foto" hidden />
+
           <canvas id="photoCanvas" hidden></canvas>
+
           <div class="camera-actions">
-            <button class="secondary-button" id="startCameraButton" type="button">Abrir camara</button>
-            <button class="primary-button" id="capturePhotoButton" type="button" disabled>Sacar foto</button>
+            <button class="secondary-button" id="startCameraButton" type="button">
+              Abrir camara
+            </button>
+
+            <button class="primary-button" id="capturePhotoButton" type="button" disabled>
+              Sacar foto
+            </button>
           </div>
-          <p id="photoCoach">Sacho Panza revisa luz, nitidez aproximada y encuadre cuando saques una foto desde la app.</p>
+
+          <p id="photoCoach">
+            Sacho Panza revisa luz, nitidez aproximada y encuadre cuando saques una foto desde la app.
+          </p>
         </div>
+
         <label>
           Comentario
-          <textarea id="suggestNote" placeholder="Ej. Entrada con rampa, carta en braille, baño adaptado"></textarea>
+
+          <textarea
+            id="suggestNote"
+            placeholder="Ej. Entrada con rampa, carta en braille, baño adaptado"
+          ></textarea>
         </label>
+
         <button class="primary-button" type="submit">Enviar sugerencia</button>
       </form>
     </dialog>
 
     <dialog id="settingsDialog" class="place-dialog wide-dialog">
-      <button class="close-button" id="closeSettingsButton" type="button" aria-label="Cerrar">×</button>
+      <button class="close-button" id="closeSettingsButton" type="button" aria-label="Cerrar">
+        ×
+      </button>
+
       <section class="settings-panel">
         <h2>Configuracion de accesibilidad</h2>
-        <p class="form-note">Si necesitás ayuda para configurar tu perfil, podés hacerlo con una persona de confianza que pueda asistirte.</p>
+
+        <p class="form-note">
+          Si necesitás ayuda para configurar tu perfil, podés hacerlo con una persona de confianza que pueda asistirte.
+        </p>
+
         <label>
           Perfil principal
+
           <select id="disabilitySelect">
             <option value="">Prefiero no decirlo</option>
             <option value="wheelchair">Uso silla de ruedas o movilidad reducida</option>
@@ -376,14 +383,23 @@
             <option value="neurodivergent">Necesito ambientes tranquilos o guia clara</option>
           </select>
         </label>
+
         <label class="toggle-row">
           <input id="narrationToggle" type="checkbox" />
           <span>Relatar botones y acciones al tocar</span>
         </label>
-        <p class="form-note">La narracion usa la voz del dispositivo. Tambien funciona con lectores de pantalla del sistema.</p>
+
+        <p class="form-note">
+          La narracion usa la voz del dispositivo. Tambien funciona con lectores de pantalla del sistema.
+        </p>
+
         <section class="history-box" aria-label="Historial de lugares">
           <h3>Historial de lugares</h3>
-          <p class="form-note" id="historyNote">Iniciá sesión para guardar los lugares que visites.</p>
+
+          <p class="form-note" id="historyNote">
+            Iniciá sesión para guardar los lugares que visites.
+          </p>
+
           <div id="historyList" class="history-list"></div>
         </section>
       </section>
