@@ -230,6 +230,8 @@ const disabilitySelect = document.querySelector("#disabilitySelect");
 const gestureNavigationToggle = document.querySelector("#gestureNavigationToggle");
 const historyList = document.querySelector("#historyList");
 const historyNote = document.querySelector("#historyNote");
+const placesPanel = document.querySelector(".places-panel");
+const settingsButton = document.querySelector("#settingsButton");
 
 function normalizeText(value) {
   return value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -929,7 +931,6 @@ document.querySelector("#closeSuggestButton").addEventListener("click", () => {
   stopCamera();
   suggestDialog.close();
 });
-document.querySelector("#settingsButton").addEventListener("click", () => settingsDialog.showModal());
 document.querySelector("#closeSettingsButton").addEventListener("click", () => settingsDialog.close());
 document.querySelector("#captureLocationButton").addEventListener("click", captureVerifiedLocation);
 startCameraButton.addEventListener("click", startCamera);
@@ -1082,3 +1083,48 @@ document.querySelector("#locateButton").addEventListener("click", () => {
 loadSession();
 renderPlaces();
 initOpenStreetMap();
+if (settingsButton && settingsDialog) {
+  settingsButton.addEventListener("click", () => {
+    settingsDialog.showModal();
+  });
+}
+
+// PANEL DESLIZABLE
+let startY = 0;
+let currentY = 0;
+let isDragging = false;
+
+if (placesPanel) {
+  placesPanel.style.transition = "transform 0.25s ease";
+  placesPanel.style.transform = "translateY(55%)";
+
+  placesPanel.addEventListener("touchstart", (e) => {
+    startY = e.touches[0].clientY;
+    isDragging = true;
+  }, { passive: true });
+
+  placesPanel.addEventListener("touchmove", (e) => {
+    if (!isDragging) return;
+
+    currentY = e.touches[0].clientY;
+    const diff = currentY - startY;
+
+    if (diff < -40) {
+      placesPanel.style.transform = "translateY(0)";
+    }
+
+    if (diff > 40) {
+      placesPanel.style.transform = "translateY(55%)";
+    }
+  }, { passive: true });
+
+  placesPanel.addEventListener("touchend", () => {
+    isDragging = false;
+  });
+}
+
+setTimeout(() => {
+  if (state.map) {
+    state.map.invalidateSize();
+  }
+}, 500);
